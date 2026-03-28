@@ -9,11 +9,11 @@ authors = [
     {name = "Samuel Müller", email = "muellesa@cs.uni-freiburg.de"},
     {name = "Frank Hutter", email = "fh@cs.uni-freiburg.de"},
 ]
-requires-python = ">=3.9,<3.12"
+requires-python = ">=3.11"
 dependencies = [
-    "torch<=1.11.0",
-    "numpy>=1.21.2,<2",
-    "requests>=2.23.0"
+    "numpy>=2.4.2",
+    "requests>=2.32.5",
+    "torch>=2.10.0",
 ]
 dynamic = ["version"]
 classifiers = [
@@ -25,9 +25,9 @@ classifiers = [
   'Operating System :: Unix',
   'Operating System :: MacOS',
   'Programming Language :: Python :: 3',
-  'Programming Language :: Python :: 3.9',
-  'Programming Language :: Python :: 3.10',
   'Programming Language :: Python :: 3.11',
+  'Programming Language :: Python :: 3.12',
+  'Programming Language :: Python :: 3.13',
 ]
 
 [project.urls]
@@ -40,3 +40,12 @@ include = ["lcpfn*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "lcpfn.version.__version__"}
+
+[tool.uv]
+exclude-newer = "30 days"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.2",
+    "types-requests>=2.32.4.20260107",
+]

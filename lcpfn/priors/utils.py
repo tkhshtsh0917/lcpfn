@@ -1,6 +1,8 @@
-from lcpfn.utils import set_locals_in_self
-from .prior import PriorDataLoader
 import math
+
+from lcpfn.utils import set_locals_in_self
+
+from .prior import PriorDataLoader
 
 
 def get_batch_to_dataloader(get_batch_method_):

@@ -1,9 +1,8 @@
-import torch
-from torch import nn
 import random
 
-from torch import Tensor
+import torch
 import torch.nn.functional as F
+from torch import Tensor, nn
 
 
 class GELU(nn.Module):

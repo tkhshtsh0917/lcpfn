@@ -2,9 +2,7 @@ import math
 
 from torch import nn
 
-from lcpfn import bar_distribution, encoders, train
-from lcpfn import utils
-
+from lcpfn import bar_distribution, encoders, train, utils
 from lcpfn.priors import utils as putils
 
 

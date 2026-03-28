@@ -16,9 +16,9 @@ class BarDistribution(nn.Module):
         self.register_buffer("bucket_widths", self.borders[1:] - self.borders[:-1])
         full_width = self.bucket_widths.sum()
         border_order = torch.argsort(borders)
-        assert (
-            full_width - (self.borders[-1] - self.borders[0])
-        ).abs() < 1e-4, f"diff: {full_width - (self.borders[-1] - self.borders[0])}"
+        assert (full_width - (self.borders[-1] - self.borders[0])).abs() < 1e-4, (
+            f"diff: {full_width - (self.borders[-1] - self.borders[0])}"
+        )
         assert (
             border_order == torch.arange(len(borders)).to(border_order.device)
         ).all(), "Please provide sorted borders!"
@@ -34,12 +34,12 @@ class BarDistribution(nn.Module):
         self, logits, y
     ):  # gives the negative log density (the _loss_), y: T x B, logits: T x B x self.num_bars
         target_sample = self.map_to_bucket_idx(y)
-        assert (target_sample >= 0).all() and (
-            target_sample < self.num_bars
-        ).all(), f"y {y} not in support set for borders (min_y, max_y) {self.borders}"
-        assert (
-            logits.shape[-1] == self.num_bars
-        ), f"{logits.shape[-1]} vs {self.num_bars}"
+        assert (target_sample >= 0).all() and (target_sample < self.num_bars).all(), (
+            f"y {y} not in support set for borders (min_y, max_y) {self.borders}"
+        )
+        assert logits.shape[-1] == self.num_bars, (
+            f"{logits.shape[-1]} vs {self.num_bars}"
+        )
 
         bucket_log_probs = torch.log_softmax(logits, -1)
         scaled_bucket_log_probs = bucket_log_probs - torch.log(self.bucket_widths)
@@ -238,8 +238,8 @@ class FullSupportBarDistribution(BarDistribution):
 
 def get_bucket_limits_(
     num_outputs: int,
-    full_range: tuple = None,
-    ys: torch.Tensor = None,
+    full_range: tuple | None = None,
+    ys: torch.Tensor | None = None,
     verbose: bool = False,
 ):
     assert (ys is not None) or (full_range is not None)
@@ -290,13 +290,13 @@ def get_bucket_limits_(
 
 def get_bucket_limits(
     num_outputs: int,
-    full_range: tuple = None,
-    ys: torch.Tensor = None,
+    full_range: tuple | None = None,
+    ys: torch.Tensor | None = None,
     verbose: bool = False,
 ):
-    assert (ys is None) != (
-        full_range is None
-    ), "Either full_range or ys must be passed."
+    assert (ys is None) != (full_range is None), (
+        "Either full_range or ys must be passed."
+    )
 
     if ys is not None:
         ys = ys.flatten()
@@ -310,9 +310,9 @@ def get_bucket_limits(
         if full_range is None:
             full_range = (ys.min(), ys.max())
         else:
-            assert (
-                full_range[0] <= ys.min() and full_range[1] >= ys.max()
-            ), f"full_range {full_range} not in range of ys {ys.min(), ys.max()}"
+            assert full_range[0] <= ys.min() and full_range[1] >= ys.max(), (
+                f"full_range {full_range} not in range of ys {ys.min(), ys.max()}"
+            )
             full_range = torch.tensor(full_range)
         ys_sorted, ys_order = ys.sort(0)
         bucket_limits = (
@@ -338,12 +338,12 @@ def get_bucket_limits(
             0,
         )
 
-    assert (
-        len(bucket_limits) - 1 == num_outputs
-    ), f"len(bucket_limits) - 1 == {len(bucket_limits) - 1} != {num_outputs} == num_outputs"
+    assert len(bucket_limits) - 1 == num_outputs, (
+        f"len(bucket_limits) - 1 == {len(bucket_limits) - 1} != {num_outputs} == num_outputs"
+    )
     assert full_range[0] == bucket_limits[0], f"{full_range[0]} != {bucket_limits[0]}"
-    assert (
-        full_range[-1] == bucket_limits[-1]
-    ), f"{full_range[-1]} != {bucket_limits[-1]}"
+    assert full_range[-1] == bucket_limits[-1], (
+        f"{full_range[-1]} != {bucket_limits[-1]}"
+    )
 
     return bucket_limits

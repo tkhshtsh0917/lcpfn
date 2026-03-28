@@ -3,11 +3,11 @@ from typing import Optional
 
 import torch
 import torch.nn as nn
-from torch import Tensor
 import torch.nn.functional as F
+from torch import Tensor
 from torch.nn import Module, TransformerEncoder
 
-from lcpfn.layer import TransformerEncoderLayer, _get_activation_fn
+from lcpfn.layer import TransformerEncoderLayer
 from lcpfn.utils import SeqBN, bool_mask_to_att_mask
 
 
@@ -148,9 +148,9 @@ class TransformerModel(nn.Module):
                 nn.init.zeros_(attn.out_proj.bias)
 
     def forward(self, src, src_mask=None, single_eval_pos=None):
-        assert isinstance(
-            src, tuple
-        ), "inputs (src) have to be given as (x,y) or (style,x,y) tuple"
+        assert isinstance(src, tuple), (
+            "inputs (src) have to be given as (x,y) or (style,x,y) tuple"
+        )
 
         if len(src) == 2:  # (x,y) and no style
             src = (None,) + src

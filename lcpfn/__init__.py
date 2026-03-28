@@ -1,7 +1,15 @@
-import os, sys
+import os
+import sys
+
+import requests
 
 sys.path.insert(0, os.path.dirname(__file__))
 
+from lcpfn.domhan_prior import create_get_batch_func, sample_from_prior
+from lcpfn.model import LCPFN
+from lcpfn.train_lcpfn import train_lcpfn
+
+from .version import __version__
 
 model_path = "trained_models"
 
@@ -19,9 +27,7 @@ def prepare_models():
         if not os.path.exists(weights_path):
             if not os.path.exists(compressed_weights_path):
                 print("Downloading", os.path.abspath(compressed_weights_path))
-                import requests
-
-                url = f'https://ml.informatik.uni-freiburg.de/research-artifacts/lcpfn/{name + ".gz"}'
+                url = f"https://ml.informatik.uni-freiburg.de/research-artifacts/lcpfn/{name + '.gz'}"
                 r = requests.get(url, allow_redirects=True)
                 os.makedirs(os.path.dirname(compressed_weights_path), exist_ok=True)
                 with open(compressed_weights_path, "wb") as f:
@@ -65,11 +71,6 @@ def __getattr__(name):
         return model_dict[name]
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
-
-from .version import __version__
-from lcpfn.model import LCPFN
-from lcpfn.train_lcpfn import train_lcpfn
-from lcpfn.domhan_prior import sample_from_prior, create_get_batch_func
 
 __all__ = [
     "LCPFN",

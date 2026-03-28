@@ -4,19 +4,19 @@ from contextlib import nullcontext
 
 import torch
 from torch import nn
+from torch.amp.autocast_mode import autocast
+from torch.amp.grad_scaler import GradScaler
 
-from lcpfn import utils
-from lcpfn.transformer import TransformerModel
+from lcpfn import positional_encodings, utils
 from lcpfn.bar_distribution import (
     BarDistribution,
 )
+from lcpfn.transformer import TransformerModel
 from lcpfn.utils import (
     get_cosine_schedule_with_warmup,
     get_openai_lr,
+    init_dist,
 )
-from lcpfn import positional_encodings
-from lcpfn.utils import init_dist
-from torch.cuda.amp import autocast, GradScaler
 
 
 class Losses:
@@ -140,7 +140,7 @@ def train(
         model.init_from_small_model(initialize_with_model)
 
     print(
-        f"Using a Transformer with {sum(p.numel() for p in model.parameters())/1000/1000:.{2}f} M parameters"
+        f"Using a Transformer with {sum(p.numel() for p in model.parameters()) / 1000 / 1000:.{2}f} M parameters"
     )
 
     try:
@@ -180,9 +180,9 @@ def train(
         total_positional_losses = 0.0
         total_positional_losses_recorded = 0
         before_get_batch = time.time()
-        assert (
-            len(dl) % aggregate_k_gradients == 0
-        ), "Please set the number of steps per epoch s.t. `aggregate_k_gradients` divides it."
+        assert len(dl) % aggregate_k_gradients == 0, (
+            "Please set the number of steps per epoch s.t. `aggregate_k_gradients` divides it."
+        )
         for batch, (data, targets, single_eval_pos) in enumerate(dl):
             if using_dist and not (
                 batch % aggregate_k_gradients == aggregate_k_gradients - 1
@@ -208,9 +208,9 @@ def train(
                     if single_eval_pos is not None:
                         targets = targets[single_eval_pos:]
                     if isinstance(criterion, nn.GaussianNLLLoss):
-                        assert (
-                            output.shape[-1] == 2
-                        ), "need to write a little bit of code to handle multiple regression targets at once"
+                        assert output.shape[-1] == 2, (
+                            "need to write a little bit of code to handle multiple regression targets at once"
+                        )
 
                         mean_pred = output[..., 0]
                         var_pred = output[..., 1].abs()
@@ -247,7 +247,7 @@ def train(
                             scaler.update()
                         else:
                             optimizer.step()
-                    except:
+                    except Exception:
                         print("Invalid optimization step encountered")
                     optimizer.zero_grad()
 

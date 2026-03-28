@@ -1,6 +1,6 @@
 import torch
+
 import lcpfn
-import warnings
 from lcpfn import utils
 
 

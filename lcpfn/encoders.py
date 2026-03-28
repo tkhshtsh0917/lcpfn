@@ -2,9 +2,8 @@ import math
 
 import torch
 import torch.nn as nn
+
 from lcpfn.utils import normalize_data
-import torch.nn.functional as F
-from torch.nn import TransformerEncoder, TransformerEncoderLayer
 
 
 class StyleEncoder(nn.Module):

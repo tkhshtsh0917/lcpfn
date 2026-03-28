@@ -1,37 +1,34 @@
 from functools import partial
-import torch
+
 import numpy as np
+import torch
+
 from lcpfn.curves import (
-    pow3,
+    dr_hill_zero_background,
+    exp4,
     ilog2,
     janoschek,
     log_power,
-    prior_ilog2,
-    uniform_prior_pow3,
-    weibull,
-    mmf,
-    vap,
     loglog_linear,
-    exp4,
+    mmf,
+    pow3,
     pow4,
-    dr_hill_zero_background,
-)
-from lcpfn.curves import (
-    prior_pow3,
+    prior_dr_hill_zero_background,
+    prior_exp4,
+    prior_ilog2,
     prior_janoschek,
     prior_log_power,
-    prior_weibull,
-    prior_mmf,
-    prior_vap,
     prior_loglog_linear,
-    prior_exp4,
+    prior_mmf,
+    prior_pow3,
     prior_pow4,
-    prior_dr_hill_zero_background,
-)
-from lcpfn.curves import (
-    uniform_prior_pow3,
+    prior_vap,
+    prior_weibull,
     uniform_prior_ilog2,
     uniform_prior_janoschek,
+    uniform_prior_pow3,
+    vap,
+    weibull,
 )
 
 
@@ -109,7 +106,7 @@ def sample_prior_comb(
             "janoschek": uniform_prior_janoschek,
         }
     else:
-        raise NotImplemented()
+        raise NotImplementedError()
 
     x = np.arange(1, seq_len + 1)
 
@@ -124,9 +121,7 @@ def sample_prior_comb(
             y += w * f_components[f](x, **kwargs)
         # add noise (can exceed [0,1], but afaik no way to implement this prior in Tobias work)
         # Note: This is the correct definition, but it differs from the noise prior definition in the paper
-        std = np.exp(
-            rng.normal(var_lnloc, var_lnscale)
-        )  
+        std = np.exp(rng.normal(var_lnloc, var_lnscale))
 
         # reject any curves that are non-increasing, exceed the [0,1] range
         if (

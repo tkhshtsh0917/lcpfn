@@ -13,16 +13,15 @@ pip install -U lcpfn
 
 > **Update**: there is an inconsistency between the code and the paper regarding the definition of the noise prior. The correct definition is the one used in the code, where $\log(\sigma)$ is defined as $\mathcal{N}(-4, 1)$.
 
-### Usage
+## Usage
 
 Try out the `notebooks` (require ``matplotlib``) for training and inference examples.
 
 **NOTE:**  Our model supports only increasing curves with values in $[0,1]$. If needed, please consider normalizing your curves to meet these constraints. See an example in ``notebooks/curve_normalization.ipynb``.
 
+## Reference
 
-### Reference
-
-```
+```text
 @inproceedings{
 adriaensens2023lcpfn,
 title={Efficient Bayesian Learning Curve Extrapolation using Prior-Data Fitted Networks},
@@ -32,5 +31,3 @@ year={2023},
 url={https://openreview.net/forum?id=xgTV6rmH6n}
 }
 ```
-
-

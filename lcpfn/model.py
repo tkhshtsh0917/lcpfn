@@ -8,7 +8,10 @@ class LCPFN(torch.nn.Module):
     def __init__(self, model_name="EMSIZE512_NLAYERS12_NBUCKETS1000"):
         super(LCPFN, self).__init__()
         self.model = torch.load(
-            getattr(lcpfn, model_name) if model_name in lcpfn.model_dict else model_name
+            getattr(lcpfn, model_name)
+            if model_name in lcpfn.model_dict
+            else model_name,
+            weights_only=False,
         )
         self.model.eval()
 
